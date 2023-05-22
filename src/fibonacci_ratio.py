@@ -1,10 +1,22 @@
 from manim import *
 import numpy as np
+def fibonacci(n):
+    sequence = [0, 1]  # Initialize the sequence with the first two numbers
+    
+    if n <= 1:
+        return sequence[:n+1]  # Return the sequence up to n (inclusive) if n is 0 or 1
+    
+    while len(sequence) <= n:
+        next_number = sequence[-1] + sequence[-2]  # Calculate the next number in the sequence
+        sequence.append(next_number)  # Add the next number to the sequence
+        
+    return sequence
+# Define the Golden Ratio
+
+golden_ratio = (1 + np.sqrt(5)) / 2
 
 class GoldenRatio(Scene):
     def construct(self):
-        # Define the Golden Ratio
-        golden_ratio = (1 + np.sqrt(5)) / 2
 
         # Create a Text object to display the Golden Ratio
         golden_ratio_text = MathTex(r"\Phi = ", "{:.6f}".format(golden_ratio))
@@ -118,6 +130,19 @@ class GoldenRootSquare(Scene):
 
 class GoldenSpiral(MovingCameraScene):
     def construct(self):
+
+        title = Text("Golden Spiral", font_size=70)
+        title.to_edge(UP)
+        title.set_color(GOLD)
+        description = Text("Cosmic beauty of the Fibonacci sequence.", font_size=40)
+        description.next_to(title, DOWN, buff=1)
+
+        self.play(Write(title), run_time=2)
+        self.wait()
+        self.play(Write(description), run_time=4)
+        self.wait()
+        self.play(FadeOut(description,title))
+
         # Number of arcs to draw
         num_arcs = 10
 
@@ -135,11 +160,10 @@ class GoldenSpiral(MovingCameraScene):
         for i in range(num_arcs):
             # Define the arc
             arc_start_angle = i * np.pi / 2
-            arc = Arc(start_angle=arc_start_angle, radius=radius, angle=np.pi / 2)
+            arc = Arc(start_angle=arc_start_angle, radius=radius, angle=np.pi / 2,stroke_width=golden_ratio**i)
             arc.shift(last_endpoint - arc.get_start())
             arc.set_color(YELLOW)  # Set the color of the arc
             arc.set_z_index(1) # Keep arc above
-
             # Update the last arc
             last_arc = arc
             last_endpoint = arc.get_end()
@@ -156,12 +180,13 @@ class GoldenSpiral(MovingCameraScene):
 
 
             # Create the square as a Polygon
-            square = Square(length_diag).move_to(center)
+            square = Square(length_diag,stroke_width=golden_ratio**i).move_to(center)
             square.set_color(PINK)  # Set the color of the square
 
             # create the text
-            text = Text(str(i)).set_color(WHITE)
-            text.scale_to_fit_width(square.width / 5)
+            
+            text = Text(str(fibonacci(i+3)[-1])).set_color(WHITE)
+            text.scale_to_fit_width(square.width / 7)
             text.move_to(square.get_center())
 
             # Move and zoom the camera frame to fit the current display
@@ -178,3 +203,5 @@ class GoldenSpiral(MovingCameraScene):
 
 
         self.wait()
+
+
