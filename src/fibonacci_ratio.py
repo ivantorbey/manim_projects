@@ -23,7 +23,7 @@ class GoldenRatio(Scene):
         golden_ratio_text.to_edge(UP)
 
         # Display the golden ratio
-        self.play(Write(golden_ratio_text))
+        self.play(Create(golden_ratio_text))
 
         # Create a list to hold the Fibonacci numbers
         fib = [1, 1]
@@ -33,7 +33,7 @@ class GoldenRatio(Scene):
         fib_text.next_to(golden_ratio_text, DOWN)
 
         # Display the first two Fibonacci numbers
-        self.play(Write(fib_text))
+        self.play(Create(fib_text))
 
         # Generate and display the next 8 Fibonacci numbers
         for i in range(8):
@@ -55,7 +55,7 @@ class GoldenRatio(Scene):
             ratio_text.next_to(fib_text, DOWN)
 
             # Display the ratio
-            self.play(Write(ratio_text))
+            self.play(Create(ratio_text))
 
             # Wait for a moment before continuing
             self.wait(0.5)
@@ -205,3 +205,80 @@ class GoldenSpiral(MovingCameraScene):
         self.wait()
 
 
+
+
+class GoldenFraction(Scene):
+    def construct(self):
+
+        title = Text("Golden Fraction", font_size=70)
+        title.to_edge(UP)
+        title.set_color(GOLD)
+        description = Text("How beautiful the golden ratio is", font_size=40)
+        description.next_to(title, DOWN, buff=1)
+
+        self.play(Write(title), run_time=2)
+        self.wait()
+        self.play(Write(description), run_time=4)
+        self.wait()
+        self.play(FadeOut(description,title))
+
+        a = 2.0
+        b = a / ((1 + np.sqrt(5)) / 2) # compute b using the golden ratio formula
+
+        # Shifting segments upwards
+        a_segment = Line(ORIGIN+(a+b)*LEFT/2 + 8*UP,  8*UP+(b-a)*LEFT/2, color=YELLOW)
+        b_segment = Line(a * RIGHT+(a+b)*LEFT/2 + 8*UP, 8*UP+(a+b)*RIGHT/2, color=BLUE)
+        a_plus_b_segment = Line(ORIGIN+(a+b)*LEFT/2 + 8*UP, 8*UP+(a+b)*RIGHT/2, color=GREEN)
+
+        a_label = MathTex("a").next_to(a_segment, DOWN)
+        b_label = MathTex("b").next_to(b_segment, DOWN)
+        a_plus_b_label = MathTex("a + b").next_to(a_plus_b_segment, UP)
+
+        self.play(Write(a_plus_b_segment), Write(a_plus_b_label))
+        self.wait()
+
+        self.play(Write(a_segment), Write(a_label))
+        self.wait()
+
+        self.play(Write(b_segment), Write(b_label))
+        self.wait()
+
+        # Moving Golden Ratio equation to middle of screen
+        golden_ratio_eqn = MathTex("\\frac{a}{b} = \\frac{a + b}{a}")
+        golden_ratio_eqn.next_to(a_plus_b_label,DOWN*5)
+        
+        self.play(Write(golden_ratio_eqn))
+        self.wait()
+        golden_ratio_eqn2 = MathTex(r"\Phi = "+"\\frac{a}{b}")
+        golden_ratio_eqn2.next_to(golden_ratio_eqn,DOWN*3)
+        self.play(Write(golden_ratio_eqn2))
+        golden_ratio_eqn3 = MathTex("\\frac{a}{b} = 1+\\frac{b}{a}")
+        golden_ratio_eqn3.next_to(a_plus_b_label,DOWN*5)
+        self.play(Transform(golden_ratio_eqn, golden_ratio_eqn3))
+        golden_ratio_eqn4=MathTex(r"\Phi ="+" 1+\\frac{1}{"+r"\Phi"+"}")
+        golden_ratio_eqn4.next_to(golden_ratio_eqn,DOWN*3)
+        self.play(Transform(golden_ratio_eqn2, golden_ratio_eqn4))
+
+        phi_expression = "\\phi"
+        phi_term = MathTex(phi_expression).scale(1.5).next_to(golden_ratio_eqn4,5*DOWN+5*LEFT)
+        self.play(Write(phi_term))
+        self.wait()
+
+        equal_sign = MathTex("=").scale(1.5).next_to(phi_term)
+        self.play(Write(equal_sign))
+        self.wait()
+
+        start_expression = "\\phi"
+        start_term = MathTex(start_expression).scale(1.5).next_to(equal_sign)
+        self.play(Write(start_term))
+        self.wait()
+
+        for _ in range(8):
+            start_expression = "1 + \\frac{1}{" + start_expression + "}"
+            next_term = MathTex(start_expression).next_to(equal_sign)
+            self.play(Transform(start_term, next_term))
+            self.wait()
+
+        approx = MathTex("\\approx 1.618").scale(1.5).next_to(start_term, DOWN)
+        self.play(Write(approx))
+        self.wait()
